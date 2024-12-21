@@ -1,0 +1,154 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entregable - Nombre de la Tarea</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="{% static 'mindforgeApp/css/style.css' %}">   
+</head>
+
+<body>
+    <nav>
+        <div class="left">
+            <div class="logo">
+                <img src="{% static 'mindforgeApp/logos/logo.jfif'  %}" alt="Logo">
+            </div>
+            <div class="links">
+                <a href="{% url 'home_view' %}"><h2>Inicio</h2></a>
+                <a href="#">Sobre nosotros</a>
+                <a href="#">Contacto</a>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <a href="{% url 'perfil_view' request.user.id %}"><i class='bx bxs-user-account'></i></a>
+        </div>
+    </nav>
+
+    <div class="sidebar">
+        <button class="btn toggle-menu">☰ Menú</button>
+        <div class="menu-items">
+            <a href="{% url 'home_view' %}">Inicio</a>
+            <a href="{% url 'contenidos_view' clase.id %}">Contenidos del curso</a>
+            <a href="{% url 'tareas_view' clase.id %}">Tareas</a>
+        </div>
+    </div>
+
+    <div class="class-content"> 
+        <header class="class-header">
+            <h1>{{ clase.nombre }}</h1>
+        </header> 
+        <button id="add-content-btn" class="btn" style="display: block;">Crear Nueva Tarea</button>
+            <div id="add-content-modal" class="modal hidden">
+                <div class="modal-content">
+                    <form id="add-content-form" enctype="multipart/form-data"  action="{% url 'anyadir_tarea_view' clase.id %}" method="POST">
+                        {% csrf_token %}
+                        <label for="titulo">Nombre de la tarea:</label>
+                        <input type="text" id="titulo" name="titulo" required>
+                    
+                        <label for="descripcion">Descripción:</label>
+                        <input type="text" id="descripcion" name="descripcion">
+
+                        <label for="archivo">Fecha de entrega:</label>
+                        <input type="date" id="fecha_entrega" name="fecha_entrega">
+                    
+                        <button type="submit" class="btn">Añadir</button>
+                        <button type="button" id="close-modal-btn" class="btn cancel-btn">Cancelar</button>
+                    </form>                                       
+                </div>
+            </div>
+
+            <div class="materials">
+                <h2>Tus Tareas</h2>
+                {% if tareas %}
+                    <ul class="task-list">
+                        {% for tarea in tareas %}
+                            <li class="task-item">
+                                <h3>{{ tarea.titulo }}</h3>
+                                <p>{{ tarea.descripcion }}</p>
+                                <p><strong>Fecha de entrega:</strong> {{ tarea.fecha_entrega }}</p>
+
+                                <!-- Botón para abrir el modal de subida de entrega -->
+                                {% if es_alumno %}
+                                    <button class="btn subir-entrega-btn" data-tarea-id="{{ tarea.id }}">Subir entrega</button>
+                                {% endif %}
+                                <div class="modal hidden" id="modal-tarea-{{ tarea.id }}">
+                                    <div class="modal-content">
+                                        <form action="{% url 'subir_entrega_view' tarea.id %}" method="POST" enctype="multipart/form-data">
+                                            {% csrf_token %}
+                                            <label for="archivo-{{ tarea.id }}">Selecciona tu archivo:</label>
+                                            <input type="file" id="archivo-{{ tarea.id }}" name="archivo" required>
+            
+                                            <button type="submit" class="btn">Subir</button>
+                                            <button type="button" class="btn cancel-btn" data-close-modal="modal-tarea-{{ tarea.id }}">Cancelar</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </li>                            
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No tienes tareas asignadas.</p>
+                {% endif %}
+            </div>
+    </div>
+
+    <script>
+        const toggleMenuButton = document.querySelector('.toggle-menu');
+        const sidebar = document.querySelector('.sidebar');
+        const classContent = document.querySelector('.class-content'); 
+
+        toggleMenuButton.addEventListener('click', () => {
+            sidebar.classList.toggle('active');  
+            classContent.classList.toggle('pushed'); 
+        });
+    </script>
+
+    <script>
+        // Elementos del DOM relacionados con el modal
+        const addContentBtn = document.getElementById('add-content-btn');
+        const addContentModal = document.getElementById('add-content-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+    
+        // Mostrar el modal cuando se hace clic en el botón "Crear Nueva Tarea"
+        addContentBtn.addEventListener('click', () => {
+            addContentModal.classList.remove('hidden');
+        });
+    
+        // Ocultar el modal cuando se hace clic en el botón "Cancelar"
+        closeModalBtn.addEventListener('click', () => {
+            addContentModal.classList.add('hidden');
+        });
+    
+        // También puedes agregar un cierre del modal al hacer clic fuera de él
+        window.addEventListener('click', (event) => {
+            if (event.target === addContentModal) {
+                addContentModal.classList.add('hidden');
+            }
+        });
+    </script>
+
+<script>
+    // Abrir modal
+    document.querySelectorAll('.subir-entrega-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const modalId = button.getAttribute('data-tarea-id');
+            document.getElementById(`modal-tarea-${modalId}`).classList.remove('hidden');
+        });
+    });
+
+    // Cerrar modal
+    document.querySelectorAll('.cancel-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const modalId = button.getAttribute('data-close-modal');
+            document.getElementById(modalId).classList.add('hidden');
+        });
+    });
+</script>
+
+    
+</body>
+</html>

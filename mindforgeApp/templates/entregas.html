@@ -1,0 +1,125 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asignatura - Nombre del Curso</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="{% static 'mindforgeApp/css/style.css' %}">   
+</head>
+
+<body>
+    <nav>
+        <div class="left">
+            <div class="logo">
+                <img src="{% static 'mindforgeApp/logos/logo.jfif'  %}">
+            </div>
+            <div class="links">
+                <a href="{% url 'home_view' %}">
+                    <h2>Inicio</h2>
+                </a>
+                <a href="#">Sobre nosotros</a>
+                <a href="#">Contacto</a>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <a href="{% url 'perfil_view' request.user.id %}"><i class='bx bxs-user-account'></i></a>
+        </div>
+    </nav>
+
+    <div class="sidebar">
+        <button class="btn toggle-menu">☰ Menú</button>
+        <div class="menu-items">
+            <a href="{% url 'home_view' %}">Inicio</a>
+            <a href="{% url 'contenidos_view' clase.id %}">Contenidos del curso</a>
+            <a href="{% url 'tareas_view' clase.id %}">Tareas</a>
+        </div>
+    </div>
+
+    <div class="class-content">
+        <header class="class-header">
+            <h1>{{ clase.nombre }}</h1>
+        </header>
+
+        {% if es_profesor %}
+        <section class="add-content">
+            <button id="add-content-btn" class="btn" style="display: block;">Crear Nueva Entrega</button>
+            <div id="add-content-modal" class="modal hidden">
+                <div class="modal-content">
+                    <form id="add-content-form" enctype="multipart/form-data"  action="{% url 'anyadir_entrega_view' clase.id %}" method="POST">
+                        {% csrf_token %}
+                        <label for="titulo">Nombre de la entrega:</label>
+                        <input type="text" id="titulo" name="titulo" required>
+                    
+                        <label for="descripcion">Descripción:</label>
+                        <input type="text" id="descripcion" name="descripcion">
+
+                        <label for="archivo">Archivos:</label>
+                        <input type="file" id="archivo" name="archivo">
+                    
+                        <button type="submit" class="btn">Añadir</button>
+                        <button type="button" id="close-modal-btn" class="btn cancel-btn">Cancelar</button>
+                    </form>                                       
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        <section class="materials">
+            <ul>
+                {% for tarea in tareas %}
+                    <li>
+                        <h3>{{ tarea.titulo }}</h3>
+                        <p>{{ tarea.descripcion }}</p>
+                        <p>Fecha de entrega: {{ tarea.fecha_entrega }}</p>
+                        
+                        {% if es_profesor %}
+                            <!-- Si es profesor, puede ver todas las entregas -->
+                            <a href="{% url 'entrega_view' clase.id tarea.id %}">Ver entregas</a>
+                        {% else %}
+                            <!-- Si es alumno, puede entregar su tarea -->
+                            <a href="{% url 'entrega_view' clase.id tarea.id %}">Entregar tarea</a>
+                        {% endif %}
+                    </li>
+                    {% empty %}
+                    <p>No hay entrega</p>
+                {% endfor %}
+            </ul>
+        </section>
+    </div>
+
+    <script>
+        const toggleMenuButton = document.querySelector('.toggle-menu');
+        const sidebar = document.querySelector('.sidebar');
+        const classContent = document.querySelector('.class-content'); 
+
+        toggleMenuButton.addEventListener('click', () => {
+            sidebar.classList.toggle('active');  
+            classContent.classList.toggle('pushed'); 
+        });
+    </script>
+
+    <script>
+        const addStudentBtn = document.getElementById('add-content-btn');
+        const modal = document.getElementById('add-content-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+
+        addStudentBtn.addEventListener('click', () => {
+            modal.classList.remove('hidden');
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
+
+        // Cierra el modal al hacer clic fuera de él
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+            }
+        });
+    </script>
+</body>

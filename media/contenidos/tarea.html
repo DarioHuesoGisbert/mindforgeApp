@@ -1,0 +1,76 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entregable - Nombre de la Tarea</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="{% static 'mindforgeApp/css/style.css' %}">   
+</head>
+
+<body>
+    <nav>
+        <div class="left">
+            <div class="logo">
+                <img src="assets/logo.jfif" alt="Logo">
+            </div>
+            <div class="links">
+                <a href="index.html"><h2>Inicio</h2></a>
+                <a href="#">Sobre nosotros</a>
+                <a href="#">Contacto</a>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <a href="perfil.html"><i class='bx bxs-user-account'></i></a>
+        </div>
+    </nav>
+
+    <div class="sidebar">
+        <button class="btn toggle-menu">☰ Menú</button>
+        <div class="menu-items">
+            <a href="index.html">Inicio</a>
+            <a href="#">Materiales del curso</a>
+            <a href="#">Tareas pendientes</a>
+            <a href="#">Exámenes</a>
+        </div>
+    </div>
+
+    <script>
+        const toggleButton = document.querySelector('.toggle-menu');
+        const sidebar = document.querySelector('.sidebar');
+        const classContent = document.querySelector('.class-content');
+
+        toggleButton.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            classContent.classList.toggle('pushed'); // Agregar o quitar clase para el contenido
+        });
+    </script>
+
+    <div class="class-content">
+        <header class="class-header">
+            <h1>Nombre del Entregable</h1>
+            <p>Fecha límite: 30/09/2024. Aquí se puede especificar qué se espera del alumno, con detalles de la tarea o instrucciones adicionales.</p>
+        </header>   
+        <section class="assignment-details">
+            <h2>Detalles del Entregable</h2>
+            <p>Aquí puedes subir tu archivo o cualquier material relacionado.</p>
+    
+            <form class="upload-form" action="#">
+                <label for="file-upload" class="file-label">Selecciona tu archivo:</label>
+                <input type="file" id="file-upload" class="file-input"></input>
+                <button type="submit" class="upload-button">Subir Tarea</button>
+            </form>
+    
+            <div class="uploaded-files">
+                <h3>Archivos subidos:</h3>
+                <ul>
+                    <li><a href="#">Tarea_anterior.pdf</a></li>
+                </ul>
+            </div>
+        </section>
+    </div>    
+</body>
+</html>

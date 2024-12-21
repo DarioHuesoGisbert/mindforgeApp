@@ -1,0 +1,91 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pantalla de Login</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="{% static 'mindforgeApp/css/style.css' %}">
+</head>
+<body>
+    <nav>
+        <div class="left">
+            <div class="logo">
+                <img src="{% static 'mindforgeApp/logos/logo.jfif'  %}">
+            </div>
+            <div class="links">
+                <a href="#">Sobre nosotros</a>
+                <a href="#">Contacto</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="login-container">
+        {% if messages %}
+            <div class="error">
+                <ul>
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        <h1>Iniciar Sesión</h1>
+
+        <!-- Botón para seleccionar estudiante -->
+        <button id="student-btn" class="btn">Iniciar sesión como Alumno</button>
+
+        <!-- Botón para seleccionar profesor -->
+        <button id="teacher-btn" class="btn">Iniciar sesión como Profesor</button>
+
+
+        <!-- Formulario de estudiante -->
+        <form id="student-form" method="POST" action="{% url 'login_view' %}" class="login-form hidden">
+            {% csrf_token %}
+            <h2>Login de Alumno</h2>
+            <input type="text" name="username" class="form-input" placeholder="Nombre de usuario (Alumno)" required>
+            <input type="password" name="password" class="form-input" placeholder="Contraseña" required>
+            <button type="submit" class="btn" style="width: 360px;">Ingresar</button>
+        </form>
+
+        <!-- Formulario de profesor -->
+        <form id="teacher-form" method="POST" action="{% url 'login_view' %}" class="login-form hidden">
+            {% csrf_token %}
+            <h2>Login de Profesor</h2>
+            <input type="text" name="username" class="form-input" placeholder="Nombre de usuario (Profesor)" required>
+            <input type="password" name="password" class="form-input" placeholder="Contraseña" required>
+            <button type="submit" class="btn" style="width: 360px;">Ingresar</button>
+        </form>
+
+        <a href="{% url 'registroAlumno_view' %}">
+            <h2>¿No tienes cuenta? Crea una aquí</h2>
+        </a>        
+    </div>
+
+    <script>
+        // Selección de botones y formularios
+        const studentBtn = document.getElementById('student-btn');
+        const teacherBtn = document.getElementById('teacher-btn');
+        const studentForm = document.getElementById('student-form');
+        const teacherForm = document.getElementById('teacher-form');
+
+        // Mostrar formulario de estudiante
+        studentBtn.addEventListener('click', () => {
+            studentForm.classList.remove('hidden');
+            teacherForm.classList.add('hidden');
+            studentBtn.style.display = 'none';
+            teacherBtn.style.display = 'none';
+        });
+
+        // Mostrar formulario de profesor
+        teacherBtn.addEventListener('click', () => {
+            teacherForm.classList.remove('hidden');
+            studentForm.classList.add('hidden');
+            studentBtn.style.display = 'none';
+            teacherBtn.style.display = 'none';
+        });
+    </script>
+</body>
+</html>

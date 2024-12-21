@@ -1,0 +1,71 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="{% static 'mindforgeApp/css/style.css' %}">   
+</head>
+
+<body>
+    <nav>
+        <div class="left">
+            <div class="logo">
+                <img src="{% static 'mindforgeApp/logos/logo.jfif'  %}">
+            </div>
+            <div class="links">
+                <a href="{% url 'home_view' %}">
+                    <h2>Inicio</h2>
+                </a>
+                <a href="#">Sobre nosotros</a>
+                <a href="#">Contacto</a>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <a href="{% url 'perfil_view' request.user.id %}"><i class='bx bxs-user-account'></i></a>
+        </div>
+    </nav>
+
+    <div class="content">    
+        <form class="profile-form" action="{% url 'actualizar_perfil' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="profile-picture" class="file-label">Foto de Perfil:</label>
+                <img src="{{ usuario.foto.url }}" alt="Foto actual" style="width: 100px; height: 100px; border-radius: 50%;">
+                <input type="file" id="profile-picture" name="foto" class="file-input">
+            </div>
+    
+            <div class="form-group">
+                <label for="first-name">Nombre:</label>
+                <input type="text" id="first-name" class="form-input" placeholder="{{ usuario.username }}">
+            </div>
+    
+            <div class="form-group">
+                <label for="last-name">Apellidos:</label>
+                <input type="text" id="last-name" class="form-input" placeholder="{{usuario.last_name}}">
+            </div>
+    
+            <div class="form-group">
+                <label for="email">Correo Electrónico:</label>
+                <input type="email" id="email" class="form-input" placeholder="{{usuario.email}}" name = "email">
+            </div>
+    
+            <div class="form-group">
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" class="form-input" placeholder="Nueva contraseña (opcional)">
+            </div>
+    
+            <button type="submit" class="btn update-button">Actualizar Perfil</button>
+
+            <button>
+                <a href="{% url 'logout' %}">Cerrar sesión</a>
+            </button>
+            
+        </form>
+    </div>    
+</body>
+</html>
